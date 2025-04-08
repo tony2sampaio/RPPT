@@ -121,7 +121,7 @@ class AleatorioProcessingAlgorithm(QgsProcessingAlgorithm):
             if feedback.isCanceled():
                 return {}
 
-            # Clip (corta camada drive pelo buffer da camada pontual) Concave hull
+            # Clip (clip drive layer by point layer buffer) Concave hull
             alg_params = {
                 'INPUT': parameters['driver'],
                 'OVERLAY': outputs['Buffer']['OUTPUT'],
@@ -133,7 +133,7 @@ class AleatorioProcessingAlgorithm(QgsProcessingAlgorithm):
             if feedback.isCanceled():
                 return {}
 
-            # algoritmo de agregação
+            # aggregation algorithm
             alg_params = {
                 'AGGREGATES': [{'aggregate': 'concatenate_unique', 'delimiter': ',', 'input': f'"{field_aggreg}"', 'length': 250,
                                 'name': field_aggreg, 'precision': 0, 'sub_type': 0, 'type': 10, 'type_name': 'text'}],
@@ -162,7 +162,7 @@ class AleatorioProcessingAlgorithm(QgsProcessingAlgorithm):
             if feedback.isCanceled():
                 return {}
 
-            # Field calculator: esperado
+            # Field calculator: expected values
             alg_params = {
                 'FIELD_LENGTH': 3,
                 'FIELD_NAME': 'expected_vals',
@@ -178,7 +178,7 @@ class AleatorioProcessingAlgorithm(QgsProcessingAlgorithm):
             if feedback.isCanceled():
                 return {}
 
-            # Field calculator (observado)
+            # Field calculator (observed values)
             alg_params = {
                 'FIELD_LENGTH': 3,
                 'FIELD_NAME': 'observed_vals',
@@ -195,15 +195,15 @@ class AleatorioProcessingAlgorithm(QgsProcessingAlgorithm):
             min_bounding_type = self.parameterAsEnum(parameters, self.MIN_BOUNDING_TYPE, context)
             bounding_output = None
 
-            # Use QgsExpressionBuilderDialog para obter o campo de agrupamento dinamicamente
+            # Use QgsExpressionBuilderDialog to get grouping field dynamically
             field_aggreg = self.parameterAsString(parameters, 'field_aggreg', context)
             #camada_driver_candidato = self.parameterAsVectorLayer(parameters, 'driver', context) #nova
             if not field_aggreg:
                 QMessageBox.critical(None, "Erro", "Grouping field selection canceled")
                 return {}
 
-            if min_bounding_type == 0:  # 'Envelope (Caixa limitante)'
-                # Lógica para Envelope
+            if min_bounding_type == 0:  # 'Envelope (Bounding Box)'
+                # Envelope Logic
                 alg_params = {
                     'INPUT': parameters['layer_to_analysis'],
                     'TYPE': 0,  # Envelope
@@ -211,20 +211,20 @@ class AleatorioProcessingAlgorithm(QgsProcessingAlgorithm):
                 }
                 bounding_output = processing.run('qgis:minimumboundinggeometry', alg_params, context=context, feedback=model_feedback, is_child_algorithm=True)['OUTPUT']
 
-            elif min_bounding_type == 1:  # 'Retângulo Orientado Mínimo'
-                # Lógica para Retângulo Orientado Mínimo
+            elif min_bounding_type == 1:  # 'Minimal Oriented Rectangle'
+                # Logic for Minimal Oriented Rectangle
                 alg_params = {
                     'INPUT': parameters['layer_to_analysis'],
-                    'TYPE': 1,  # Retângulo Orientado Mínimo
+                    'TYPE': 1,  # Minimal Oriented Rectangle
                     'OUTPUT': QgsProcessing.TEMPORARY_OUTPUT
                 }
                 bounding_output = processing.run('qgis:minimumboundinggeometry', alg_params, context=context, feedback=model_feedback, is_child_algorithm=True)['OUTPUT']
 
-            elif min_bounding_type == 2:  # 'Círculo Fechado Mínimo'
-                # Lógica para Círculo Fechado Mínimo
+            elif min_bounding_type == 2:  # 'Minimal Closed Circle'
+                # Logic for Minimal Closed Circle
                 alg_params = {
                     'INPUT': parameters['layer_to_analysis'],
-                    'TYPE': 2,  # Círculo Fechado Mínimo
+                    'TYPE': 2,  # Minimal Closed Circle
                     'OUTPUT': QgsProcessing.TEMPORARY_OUTPUT
                 }
                 bounding_output = processing.run('qgis:minimumboundinggeometry', alg_params, context=context, feedback=model_feedback, is_child_algorithm=True)['OUTPUT']
@@ -238,7 +238,7 @@ class AleatorioProcessingAlgorithm(QgsProcessingAlgorithm):
                 'DISSOLVE': True,
                 'DISTANCE': parameters['define_buffer'],
                 'END_CAP_STYLE': 0,  # Round
-                'INPUT': bounding_output,  # Usa a saída do processo de MIN_BOUNDING
+                'INPUT': bounding_output,  # Uses the output of the process MIN_BOUNDING
                 'JOIN_STYLE': 0,  # Round
                 'MITER_LIMIT': 2,
                 'SEGMENTS': 5,
@@ -251,7 +251,7 @@ class AleatorioProcessingAlgorithm(QgsProcessingAlgorithm):
             if feedback.isCanceled():
                 return {}
 
-            # Clip (corta camada drive pelo buffer da camada pontual)
+            # Clip (clip drive layer by point layer buffer)
             alg_params = {
                 'INPUT': parameters['driver'],
                 'OVERLAY': outputs['Buffer']['OUTPUT'],
@@ -263,7 +263,7 @@ class AleatorioProcessingAlgorithm(QgsProcessingAlgorithm):
             if feedback.isCanceled():
                 return {}
 
-            # algoritmo de agregação
+            # aggregation algorithm
             alg_params = {
                 'AGGREGATES': [{'aggregate': 'concatenate_unique', 'delimiter': ',', 'input': f'"{field_aggreg}"', 'length': 250,
                                 'name': field_aggreg, 'precision': 0, 'sub_type': 0, 'type': 10, 'type_name': 'text'}],
@@ -292,7 +292,7 @@ class AleatorioProcessingAlgorithm(QgsProcessingAlgorithm):
             if feedback.isCanceled():
                 return {}
 
-            # Field calculator: esperado
+            # Field calculator: expected values
             alg_params = {
                 'FIELD_LENGTH': 3,
                 'FIELD_NAME': 'expected_vals',
@@ -308,7 +308,7 @@ class AleatorioProcessingAlgorithm(QgsProcessingAlgorithm):
             if feedback.isCanceled():
                 return {}
 
-            # Field calculator (observado)
+            # Field calculator (observed values)
             alg_params = {
                 'FIELD_LENGTH': 3,
                 'FIELD_NAME': 'observed_vals',
